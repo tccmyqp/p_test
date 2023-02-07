@@ -93,88 +93,53 @@ def receive_data():
     index_page = compile_index_page(local_link, owner, repo, proxy)   
     return index_page
 
-#-------------------------------------------------------/ отображает repo details
-@app.route('/repo/<owner>/<repo>/details', methods=['GET'])
-def repo_details(owner: str, repo: str):
+def request_processing(link):
     try:
-        response = requests.get(f'{github_link}/{owner}/{repo}', proxies=proxy)
+        response = requests.get(link, proxies=proxy)
         if response.status_code == 200:
-            logger.info(f"request repo details from the Github API {owner}/{repo}")
+            logger.info(f"request {link}")
             return jsonify(response.json())
         else:
-            logger.warning(f'Failed to get repo details from the Github API {owner}/{repo}. Response status code: {response.status_code}')
+            logger.warning(f'Failed to get {link}. Response status code: {response.status_code}')
             return f"response error: {response.status_code}"
     except:
         e = sys.exc_info()[1]
-        logger.exception(f'Failed to get repo details from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
+        logger.exception(f'Failed to get {link}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
+        
+#-------------------------------------------------------/ отображает repo details
+@app.route('/repo/<owner>/<repo>/details', methods=['GET'])
+def repo_details(owner: str, repo: str):
+    link = f'{github_link}/{owner}/{repo}'
+    request_processing(link)
     
     
 #-------------------------------------------------------/ отображает repo pulls
 @app.route('/repo/<owner>/<repo>/pulls', methods=['GET'])
 def repo_pulls(owner: str, repo: str):
-    try:
-        response = requests.get(f'{github_link}/{owner}/{repo}/pulls', proxies=proxy)
-        if response.status_code == 200:
-            logger.info(f"request pulls from the Github API {owner}/{repo}")
-            return jsonify(response.json())
-        else:
-            logger.warning(f'Failed to get repo pulls from the Github API {owner}/{repo}. Response status code: {response.status_code}')
-            return f"response error: {response.status_code}"
-    except:
-        e = sys.exc_info()[1]
-        logger.exception(f'Failed to get repo pulls from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
-            
+    link = f'{github_link}/{owner}/{repo}/pulls'
+    request_processing(link)
+    
     
 #-------------------------------------------------------/ отображает pulls stale
 @app.route('/repo/<owner>/<repo>/pulls/stale', methods=['GET'])
 def repo_stale_pulls(owner: str, repo: str):
-    try:
-        response = requests.get(f'{github_link}/{owner}/{repo}/pulls', proxies=proxy)
-        
-        if response.status_code == 200:
-            pulls = response.json()
-        
-            logger.info(f"request pulls stale from the Github API {owner}/{repo}")
-            stale_pulls = [pull for pull in pulls if (datetime.now() - datetime.strptime(pull['updated_at'], '%Y-%m-%dT%H:%M:%SZ')).days >= 14]
-            return jsonify(stale_pulls)
-        else:
-            logger.warning(f'Failed to get repo pulls stale from the Github API {owner}/{repo}. Response status code: {response.status_code}')
-            return f"response error: {response.status_code}"
-    except:
-        e = sys.exc_info()[1]
-        logger.exception(f'Failed to get repo pulls stale from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
-
-
+    link = f'{github_link}/{owner}/{repo}/pulls/stale'
+    request_processing(link)
+    
+    
 #-------------------------------------------------------/ отображает repo issues
 @app.route('/repo/<owner>/<repo>/issues', methods=['GET'])
 def repo_issues(owner: str, repo: str):
-    try:
-        response = requests.get(f'{github_link}/{owner}/{repo}/issues', proxies=proxy)
-        if response.status_code == 200:
-            logger.info(f"request repo issues from the Github API {owner}/{repo}")
-            return jsonify(response.json())
-        else:
-            logger.warning(f'Failed to get repo issues from the Github API {owner}/{repo}. Response status code: {response.status_code}')
-            return f"response error: {response.status_code}"
-    except:
-        e = sys.exc_info()[1]
-        logger.exception(f'Failed to get repo issues from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
+    link = f'{github_link}/{owner}/{repo}/issues'
+    request_processing(link)
 
 
 #-------------------------------------------------------/ отображает repo forks
 @app.route('/repo/<owner>/<repo>/forks', methods=['GET'])
 def repo_forks(owner: str, repo: str):
-    try:
-        response = requests.get(f'{github_link}/{owner}/{repo}/forks', proxies=proxy)
-        if response.status_code == 200:
-            logger.info(f"request repo forks from the Github API {owner}/{repo}")
-            return jsonify(response.json())
-        else:
-            logger.warning(f'Failed to get repo forks from the Github API {owner}/{repo}. Response status code: {response.status_code}')
-            return f"response error: {response.status_code}"
-    except:
-        e = sys.exc_info()[1]
-        logger.exception(f'Failed to get repo forks from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
-
+    link = f'{github_link}/{owner}/{repo}/forks'
+    request_processing(link)
+    
+    
 if __name__ == '__main__':
     app.run(debug=True)
