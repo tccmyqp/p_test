@@ -15,10 +15,10 @@ class TestApi(unittest.TestCase):
         self.assertIn(proxy["http"], response.data.decode())
     
     def test_receive_data(self):
-        response = self.app.post("/form", data={"owner_field": "tccmyqp", "repo_field": "p_test"})
+        response = self.app.post("/form", data={"owner_field": "new_owner", "repo_field": "new_repo"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("tccmyqp", response.data.decode())
-        self.assertIn("p_test", response.data.decode())
+        self.assertIn("new_owner", response.data.decode())
+        self.assertIn("new_repo", response.data.decode())
         
         
     # Executing the tests in the above test case class
