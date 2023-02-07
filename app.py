@@ -58,6 +58,7 @@ def compile_index_page(local_link,owner,repo, proxy):
 
 index_page = compile_index_page(local_link, owner, repo, proxy)
 
+
 #------------------------------------------------------ логгер
 # Define the logger and set its logging level
 logger = logging.getLogger(__name__)
@@ -73,16 +74,18 @@ file_handler.setFormatter(formatter)
 
 # Add the handler to the logger
 logger.addHandler(file_handler)
-
-#-------------------------------------------------------------- Flask
 logger.info("-------------- app run -----------------")
 
+
+#------------------------------------------------------- Flask
 app = Flask(__name__)
+
 
 #------------------------------------------------------- отображает индексную станицу
 @app.route("/")
 def index():  
     return index_page
+
 
 #------------------------------------------------------- получает данные и отображает измененную индексную станицу
 @app.route('/form', methods=['POST'])
@@ -92,6 +95,7 @@ def receive_data():
     repo = request.form['repo_field']
     index_page = compile_index_page(local_link, owner, repo, proxy)   
     return index_page
+
 
 def request_processing(link):
     try:
@@ -105,40 +109,42 @@ def request_processing(link):
     except:
         e = sys.exc_info()[1]
         logger.exception(f'Failed to get {link}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
-        
+        return f"Exception!"
+
 #-------------------------------------------------------/ отображает repo details
 @app.route('/repo/<owner>/<repo>/details', methods=['GET'])
 def repo_details(owner: str, repo: str):
     link = f'{github_link}/{owner}/{repo}'
-    request_processing(link)
-    
+    return request_processing(link)
+
     
 #-------------------------------------------------------/ отображает repo pulls
 @app.route('/repo/<owner>/<repo>/pulls', methods=['GET'])
 def repo_pulls(owner: str, repo: str):
     link = f'{github_link}/{owner}/{repo}/pulls'
-    request_processing(link)
+    return request_processing(link)
     
     
 #-------------------------------------------------------/ отображает pulls stale
 @app.route('/repo/<owner>/<repo>/pulls/stale', methods=['GET'])
 def repo_stale_pulls(owner: str, repo: str):
-    link = f'{github_link}/{owner}/{repo}/pulls/stale'
-    request_processing(link)
+    pulls = requests.get(f'https://api.github.com/repos/{owner}/{repo}/pulls', proxies=proxy).json()
+    stale_pulls = [pull for pull in pulls if (datetime.now() - datetime.strptime(pull['updated_at'], '%Y-%m-%dT%H:%M:%SZ')).days >= 14]
+    return jsonify(stale_pulls)
     
     
 #-------------------------------------------------------/ отображает repo issues
 @app.route('/repo/<owner>/<repo>/issues', methods=['GET'])
 def repo_issues(owner: str, repo: str):
     link = f'{github_link}/{owner}/{repo}/issues'
-    request_processing(link)
+    return request_processing(link)
 
 
 #-------------------------------------------------------/ отображает repo forks
 @app.route('/repo/<owner>/<repo>/forks', methods=['GET'])
 def repo_forks(owner: str, repo: str):
     link = f'{github_link}/{owner}/{repo}/forks'
-    request_processing(link)
+    return request_processing(link)
     
     
 if __name__ == '__main__':
