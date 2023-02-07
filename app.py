@@ -102,27 +102,27 @@ def request_processing(link):
         response = requests.get(link, proxies=proxy)
         if response.status_code == 200:
             logger.info(f"request {link}")
-            return jsonify(response.json())
+            return response
         else:
             logger.warning(f'Failed to get {link}. Response status code: {response.status_code}')
-            return f"response error: {response.status_code}"
+            return response
     except:
         e = sys.exc_info()[1]
         logger.exception(f'Failed to get {link}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
-        return f"Exception!"
+        return response
 
 #-------------------------------------------------------/ отображает repo details
 @app.route('/repo/<owner>/<repo>/details', methods=['GET'])
 def repo_details(owner: str, repo: str):
     link = f'{github_link}/{owner}/{repo}'
-    return request_processing(link)
+    return jsonify(request_processing(link).json())
 
     
 #-------------------------------------------------------/ отображает repo pulls
 @app.route('/repo/<owner>/<repo>/pulls', methods=['GET'])
 def repo_pulls(owner: str, repo: str):
     link = f'{github_link}/{owner}/{repo}/pulls'
-    return request_processing(link)
+    return jsonify(request_processing(link).json())
     
     
 #-------------------------------------------------------/ отображает pulls stale
@@ -137,14 +137,14 @@ def repo_stale_pulls(owner: str, repo: str):
 @app.route('/repo/<owner>/<repo>/issues', methods=['GET'])
 def repo_issues(owner: str, repo: str):
     link = f'{github_link}/{owner}/{repo}/issues'
-    return request_processing(link)
+    return jsonify(request_processing(link).json())
 
 
 #-------------------------------------------------------/ отображает repo forks
 @app.route('/repo/<owner>/<repo>/forks', methods=['GET'])
 def repo_forks(owner: str, repo: str):
     link = f'{github_link}/{owner}/{repo}/forks'
-    return request_processing(link)
+    return jsonify(request_processing(link).json())
     
     
 if __name__ == '__main__':
