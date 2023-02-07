@@ -101,6 +101,9 @@ def repo_details(owner: str, repo: str):
         if response.status_code == 200:
             logger.info(f"request repo details from the Github API {owner}/{repo}")
             return jsonify(response.json())
+        else:
+            logger.warning(f'Failed to get repo details from the Github API {owner}/{repo}. Response status code: {response.status_code}')
+            return f"response error: {response.status_code}"
     except:
         e = sys.exc_info()[1]
         logger.exception(f'Failed to get repo details from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
@@ -114,6 +117,9 @@ def repo_pulls(owner: str, repo: str):
         if response.status_code == 200:
             logger.info(f"request pulls from the Github API {owner}/{repo}")
             return jsonify(response.json())
+        else:
+            logger.warning(f'Failed to get repo pulls from the Github API {owner}/{repo}. Response status code: {response.status_code}')
+            return f"response error: {response.status_code}"
     except:
         e = sys.exc_info()[1]
         logger.exception(f'Failed to get repo pulls from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
@@ -131,6 +137,9 @@ def repo_stale_pulls(owner: str, repo: str):
             logger.info(f"request pulls stale from the Github API {owner}/{repo}")
             stale_pulls = [pull for pull in pulls if (datetime.now() - datetime.strptime(pull['updated_at'], '%Y-%m-%dT%H:%M:%SZ')).days >= 14]
             return jsonify(stale_pulls)
+        else:
+            logger.warning(f'Failed to get repo pulls stale from the Github API {owner}/{repo}. Response status code: {response.status_code}')
+            return f"response error: {response.status_code}"
     except:
         e = sys.exc_info()[1]
         logger.exception(f'Failed to get repo pulls stale from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
@@ -144,6 +153,9 @@ def repo_issues(owner: str, repo: str):
         if response.status_code == 200:
             logger.info(f"request repo issues from the Github API {owner}/{repo}")
             return jsonify(response.json())
+        else:
+            logger.warning(f'Failed to get repo issues from the Github API {owner}/{repo}. Response status code: {response.status_code}')
+            return f"response error: {response.status_code}"
     except:
         e = sys.exc_info()[1]
         logger.exception(f'Failed to get repo issues from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
@@ -157,6 +169,9 @@ def repo_forks(owner: str, repo: str):
         if response.status_code == 200:
             logger.info(f"request repo forks from the Github API {owner}/{repo}")
             return jsonify(response.json())
+        else:
+            logger.warning(f'Failed to get repo forks from the Github API {owner}/{repo}. Response status code: {response.status_code}')
+            return f"response error: {response.status_code}"
     except:
         e = sys.exc_info()[1]
         logger.exception(f'Failed to get repo forks from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
