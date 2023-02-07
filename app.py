@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 import requests
 import logging
 import datetime
+import sys
 # import unittest
 
 # ------------------------------------------------------ прокси
@@ -101,7 +102,8 @@ def repo_details(owner: str, repo: str):
             logger.info(f"request repo details from the Github API {owner}/{repo}")
             return jsonify(response.json())
     except:
-        logger.error(f'Failed to get repo details from the Github API {owner}/{repo}. Response status code: {response.status_code}')
+        e = sys.exc_info()[1]
+        logger.exception(f'Failed to get repo details from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
     
     
 #-------------------------------------------------------/ отображает repo pulls
@@ -113,7 +115,8 @@ def repo_pulls(owner: str, repo: str):
             logger.info(f"request pulls from the Github API {owner}/{repo}")
             return jsonify(response.json())
     except:
-        logger.error(f'Failed to get repo pulls from the Github API {owner}/{repo}. Response status code: {response.status_code}')
+        e = sys.exc_info()[1]
+        logger.exception(f'Failed to get repo pulls from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
             
     
 #-------------------------------------------------------/ отображает pulls stale
@@ -129,7 +132,8 @@ def repo_stale_pulls(owner: str, repo: str):
             stale_pulls = [pull for pull in pulls if (datetime.now() - datetime.strptime(pull['updated_at'], '%Y-%m-%dT%H:%M:%SZ')).days >= 14]
             return jsonify(stale_pulls)
     except:
-        logger.error(f'Failed to get repo pulls stale from the Github API {owner}/{repo}. Response status code: {response.status_code}')
+        e = sys.exc_info()[1]
+        logger.exception(f'Failed to get repo pulls stale from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
 
 
 #-------------------------------------------------------/ отображает repo issues
@@ -141,7 +145,8 @@ def repo_issues(owner: str, repo: str):
             logger.info(f"request repo issues from the Github API {owner}/{repo}")
             return jsonify(response.json())
     except:
-        logger.error(f'Failed to get repo issues stale from the Github API {owner}/{repo}. Response status code: {response.status_code}')
+        e = sys.exc_info()[1]
+        logger.exception(f'Failed to get repo issues from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
 
 
 #-------------------------------------------------------/ отображает repo forks
@@ -153,7 +158,8 @@ def repo_forks(owner: str, repo: str):
             logger.info(f"request repo forks from the Github API {owner}/{repo}")
             return jsonify(response.json())
     except:
-        logger.error(f'Failed to get repo forks stale from the Github API {owner}/{repo}. Response status code: {response.status_code}')
+        e = sys.exc_info()[1]
+        logger.exception(f'Failed to get repo forks from the Github API {owner}/{repo}. Response status code: {response.status_code}. Exeption: {e.args[0]}')
 
 if __name__ == '__main__':
     app.run(debug=True)
