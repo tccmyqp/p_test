@@ -113,14 +113,14 @@ def request_processing(link):
 
 #-------------------------------------------------------/ отображает repo details
 @app.route('/repo/<owner>/<repo>/details', methods=['GET'])
-def repo_details(owner: str, repo: str):
+def repo_details(owner: str, repo: str)//:
     link = f'{github_link}/{owner}/{repo}'
     return jsonify(request_processing(link).json())
 
     
 #-------------------------------------------------------/ отображает repo pulls
 @app.route('/repo/<owner>/<repo>/pulls', methods=['GET'])
-def repo_pulls(owner: str, repo: str).:
+def repo_pulls(owner: str, repo: str):
     link = f'{github_link}/{owner}/{repo}/pulls'
     return jsonify(request_processing(link).json())
     
